@@ -56,6 +56,7 @@ void setup(){
 void loop(){
      //routine di ricezione dato
      RiceviDatoRadioF();
+     Serial.println("CIai");
      //Serial.println(potenziom1.MeasData );
      
     //Azione da fare se arriva il segnale analogico del sensore di suono...i valori sono indicativi
