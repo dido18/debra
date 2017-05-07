@@ -1,8 +1,8 @@
 #include <RCSwitch.h>
 
 // pin of the TX
-#define PinTx 12 
-#define ReadSoundPin = 0
+#define PinTx 12
+#define ReadSoundPin 0
 RCSwitch mySwitch = RCSwitch();
 
 void setup() {
@@ -37,7 +37,7 @@ void loop() {
 
   digitalWrite(13, HIGH); // Flash a light to show transmitting
   mySwitch.send(analogRead(ReadSoundPin), 24);
-  delay(2000); 
+  delay(10); 
   digitalWrite(13, LOW); // Flash a light to show transmitting
 
 //  /* Same switch as above, but using decimal code */
