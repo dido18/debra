@@ -30,14 +30,17 @@ void loop() {
   // In this example it's ON-ON-ON-ON-ON.
   // The second parameter represents the setting of the last 5 DIP switches. 
   // In this example the last 5 DIP switches are OFF-OFF-OFF-ON-OFF.  
-  mySwitch.switchOn("11111", "00010");
-  delay(1000);
-  mySwitch.switchOff("11111", "00010");
-  delay(1000);
+  
+  // mySwitch.switchOn("11111", "00010");
+  //delay(1000);
+  ///mySwitch.switchOff("11111", "00010");
+  //delay(1000);
 
   digitalWrite(13, HIGH); // Flash a light to show transmitting
+  // Serial.print("Sending..");
   mySwitch.send(analogRead(ReadSoundPin), 24);
-  delay(10); 
+  delay(2000); 
+  
   digitalWrite(13, LOW); // Flash a light to show transmitting
 
 //  /* Same switch as above, but using decimal code */
