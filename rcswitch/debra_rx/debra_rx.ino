@@ -11,6 +11,7 @@ void setup() {
   //Board  Digital Pins Usable For Interrupts
   //Uno, Nano, Mini, other 328-based  PIN: 2, 3 
   mySwitch.enableReceive(0);  // Receiver on interrupt 0 => that is pin #2
+  Serial.println("DEBRA - completed setup");
 
 }
 
