@@ -1,4 +1,4 @@
-# DEBRA
+# DEBRA DEtection Baby Radio Access
 
 ## Hardware
 Specifications RF 433MHz Receiver
@@ -32,6 +32,19 @@ Library for 433Mhz transmission with Arduino:
 Tutorials:
 - [ismanettone- virtualwire](http://ismanettoneblog.altervista.org/blog/lezione-12-comunicazioni-wireless-low-cost-arduino/?doing_wp_cron=1493236840.0937430858612060546875)
 
+
+## Trasmit message
+
+ The 3,5,4,20 define the number of bits assigned to each element in the structure so only 32 bits (4 bytes) are used.
+```
+// The MESSAGE being Sent over wireless
+struct Message {
+  byte operation  :  3 ;   // P for Publish / S-set G-get value
+  byte locationID :  5 ;   // Defines a Location In House
+  byte measure    :  4 ;   // What are we measuring
+  long value      : 20 ;   // The value we observed
+} message;
+```
 
 ## Arduino Libro
 - *livello TTL** codifica di 0 con 0 volt, 1 con  5 Volt (3,3 volt)
