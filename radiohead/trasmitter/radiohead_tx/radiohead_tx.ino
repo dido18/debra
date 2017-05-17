@@ -19,13 +19,15 @@ struct dataStruct{
 
 byte tx_buf[sizeof(message)] = {0};
 
+int sensorPin = A0;    // select the input anaolgo pin
+
 void setup()
 {
     Serial.begin(9600);   // Debugging only
     if (!driver.init())
          Serial.println("init failed");
 
-    message.press_norm=65535; 
+    // message.press_norm=65535; 
     message.press_hg=0.59; 
     message.temp=22.394; 
 
@@ -42,6 +44,8 @@ void loop()
 {
     //const char *msg = "Hello World!";
     digitalWrite(13, HIGH); // Flash a light to show transmitting
+
+    message.press_norm = analogRead(sensorPin);  // read analog sound value
 
     memcpy(tx_buf, &message, sizeof(message) );
     //void * memcpy ( void * destination, const void * source, size_t num );
