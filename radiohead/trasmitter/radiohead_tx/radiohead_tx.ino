@@ -3,13 +3,13 @@
 
 RH_ASK driver;
 
-// pin of the TX
-//#define PinTx 12
-//#define ReadSoundPin 0
+//   pin of the TX
+//  #define PinTx 12
+//  #define ReadSoundPin 0
 
 
 struct dataStruct{
-  float press_norm ; 
+  unsigned int press_norm ;   // 2 bytes with no negative numbers = 65,535 (2^16) - 1)
   float press_hg;
   float temp;
   unsigned long counter;
@@ -25,7 +25,7 @@ void setup()
     if (!driver.init())
          Serial.println("init failed");
 
-    message.press_norm=1000.11; 
+    message.press_norm=65535; 
     message.press_hg=0.59; 
     message.temp=22.394; 
 

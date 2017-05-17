@@ -12,7 +12,7 @@ RH_ASK driver;
 //)   
 
 struct dataStruct{
-  float press_norm ; 
+  unsigned int press_norm ; 
   float press_hg;
   float temp;
   unsigned long counter;
