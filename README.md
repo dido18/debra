@@ -1,4 +1,4 @@
-# DEBRA
+# DEBRA DEtection Baby Radio Access
 
 ## Hardware
 Specifications RF 433MHz Receiver
