@@ -9,6 +9,7 @@ void setup()
     Serial.begin(9600); // Debugging only
     if (!driver.init())
          Serial.println("init failed");
+    driver.maxMessageLength (); 
 }
 
 void loop()

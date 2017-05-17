@@ -12,6 +12,13 @@ void setup()
     Serial.begin(9600);   // Debugging only
     if (!driver.init())
          Serial.println("init failed");
+
+   
+    uint8_t maxMessage= driver.maxMessageLength ();  //Returns the maximum message length available in this Driver. 60 bytes = 30 unsigned int
+    Serial.println(maxMessage);
+    Serial.println(sizeof(maxMessage));
+    int value = 4;
+    Serial.println(sizeof(value));
 }
 
 void loop()
