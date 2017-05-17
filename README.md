@@ -1,14 +1,14 @@
 # DEBRA DEtection Baby Radio Access
 
 ## Hardware
-Specifications RF 433MHz Receiver
+Specifications RF 433MHz *Receiver*
 
 - Frequency Range: 433.92 MHz
 - Modulation: ASK
 - Input Voltage: 5V
 - Price: $1 to $2
 
-Specifications RF 433MHz Transmitter
+Specifications RF 433MHz *Transmitter*
 - Frequency Range: 433.92MHz
 - Input Voltage: 3-12V
 
