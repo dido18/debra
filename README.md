@@ -33,6 +33,9 @@ Tutorials:
 - [ismanettone- virtualwire](http://ismanettoneblog.altervista.org/blog/lezione-12-comunicazioni-wireless-low-cost-arduino/?doing_wp_cron=1493236840.0937430858612060546875)
 
 
+## Hardware
+ - 
+
 ## Trasmit message
 
  The 3,5,4,20 define the number of bits assigned to each element in the structure so only 32 bits (4 bytes) are used.

@@ -3,15 +3,16 @@
 
 RH_ASK driver;
 
-//   pin of the TX
-//  #define PinTx 12
-//  #define ReadSoundPin 0
+// driver.maxMessageLength () = 60 bytes every message
+
+//  Default TX pin is 12
+
 
 
 struct dataStruct{
-  unsigned int press_norm ;   // 2 bytes with no negative numbers = 65,535 (2^16) - 1)
-  float press_hg;
-  float temp;
+  unsigned int sound ;   // 2 bytes with no negative numbers = 65,535 (2^16) - 1)
+  //float press_hg;
+  //float temp;
   unsigned long counter;
    
 }message;
@@ -23,29 +24,20 @@ int sensorPin = A0;    // select the input anaolgo pin
 
 void setup()
 {
+    pinMode(A0, INPUT);
     Serial.begin(9600);   // Debugging only
     if (!driver.init())
          Serial.println("init failed");
 
-    // message.press_norm=65535; 
-    message.press_hg=0.59; 
-    message.temp=22.394; 
-
-   
-//    uint8_t maxMessage= driver.maxMessageLength ();  //Returns the maximum message length available in this Driver. 60 bytes = 30 unsigned int
-//    Serial.println(maxMessage);
-//    
-//    Serial.println(sizeof(maxMessage));  // 60 bytes
-//    int value = 4;
-//    Serial.println(sizeof(value));
 }
 
 void loop()
 {
-    //const char *msg = "Hello World!";
     digitalWrite(13, HIGH); // Flash a light to show transmitting
 
-    message.press_norm = analogRead(sensorPin);  // read analog sound value
+    message.sound = analogRead(sensorPin);  // read analog sound value
+    Serial.println("Sound level");
+    Serial.println(message.press_norm);
 
     memcpy(tx_buf, &message, sizeof(message) );
     //void * memcpy ( void * destination, const void * source, size_t num );
