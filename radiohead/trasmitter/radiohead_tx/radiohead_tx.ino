@@ -5,8 +5,6 @@ RH_ASK driver;
 
 // driver.maxMessageLength () = 60 bytes every message
 
-//  Default TX pin is 12
-
 
 
 struct dataStruct{
@@ -22,6 +20,16 @@ byte tx_buf[sizeof(message)] = {0};
 
 int sensorPin = A0;    // select the input anaolgo pin
 
+const int middleValue = 90 ;  //512
+const int numberOfSamples = 128; // how many reads every cycle
+int sample;                      // value of the michopone read every time
+long segnale;
+
+long averageReading;
+
+long runningAverage = 0;
+const int averageOver = 16;
+
 void setup()
 {
     pinMode(A0, INPUT);
@@ -33,28 +41,53 @@ void setup()
 
 void loop()
 {
-    digitalWrite(13, HIGH); // Flash a light to show transmitting
+      long  = read_sound();
+      Serial.println(g);
 
-    message.sound = analogRead(sensorPin);  // read analog sound value
-    Serial.println("Sound level");
-    Serial.println(message.press_norm);
+ 
+     digitalWrite(13, HIGH); // Flash a light to show transmitting
+//
+//    message.sound = analogRead(sensorPin);  // read analog sound value
+//    Serial.println("Sound level");
+//    Serial.println(message.press_norm);
+//
+//    memcpy(tx_buf, &message, sizeof(message) );
+//    //void * memcpy ( void * destination, const void * source, size_t num );
+//    // Copy block of memory
+//    // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+//    byte zize=sizeof(message);
+//
+//    driver.send((uint8_t *)tx_buf, zize);
+//    //Serial.print("Sending.....");
+//
+//    // driver.send((uint8_t *)msg, strlen(msg));
+//    driver.waitPacketSent();
+//
+//    digitalWrite(13, LOW);
+//    message.counter++;
+//
+//    delay(1000);
+//
+}
 
-    memcpy(tx_buf, &message, sizeof(message) );
-    //void * memcpy ( void * destination, const void * source, size_t num );
-    // Copy block of memory
-    // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-    byte zize=sizeof(message);
 
-    driver.send((uint8_t *)tx_buf, zize);
-    Serial.print("Sending.....");
 
-    // driver.send((uint8_t *)msg, strlen(msg));
-    driver.waitPacketSent();
+long  read_sound()
+{
+  long sumOfSquares = 0;
+  for (int i =0; i < numberOfSamples ; i++)
+  {
+    sample = analogRead(sensorPin);
+    //Serial.println(sample);
+    segnale = (sample - middleValue);  // calculate the shift from the middle value
+    segnale *= segnale;  // power the signal for having positive values
+    sumOfSquares += segnale;
+  }
 
-    digitalWrite(13, LOW);
-    message.counter++;
+  averageReading = sumOfSquares/numberOfSamples;                // actual average
+  runningAverage = (((averageOver-1)*runningAverage)+averageReading)/averageOver; //
 
-    delay(1000);
-
+  //Serial.println(runningAverage);
+  return runningAverage;
 }
 

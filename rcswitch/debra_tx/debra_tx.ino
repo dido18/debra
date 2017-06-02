@@ -3,6 +3,7 @@
 // pin of the TX
 #define PinTx 12
 #define ReadSoundPin 0
+
 RCSwitch mySwitch = RCSwitch();
 
 void setup() {
@@ -19,7 +20,7 @@ void setup() {
 
   // Optional set pulse length.
   // mySwitch.setPulseLength(320);
-  
+   mySwitch.setPulseLength(361);
   // Optional set number of transmission repetitions.
   // mySwitch.setRepeatTransmit(15);
 }
@@ -37,9 +38,10 @@ void loop() {
   //delay(1000);
 
   digitalWrite(13, HIGH); // Flash a light to show transmitting
-  // Serial.print("Sending..");
-  mySwitch.send(analogRead(ReadSoundPin), 24);
-  delay(2000); 
+  //Serial.print("Sending..");
+  //mySwitch.send(analogRead(ReadSoundPin), 24);
+  //mySwitch.send(5592513, 24); //5592512
+  //delay(2000); 
   
   digitalWrite(13, LOW); // Flash a light to show transmitting
 
@@ -48,6 +50,11 @@ void loop() {
 //  delay(1000);  
 //  mySwitch.send(5396, 24);
 //  delay(1000);  
+
+   
+
+// send code A telecomando universale
+//mySwitch.send("010101010101010111000000");
 //
 //  /* Same switch as above, but using binary code (5393) */
 //  mySwitch.send("000000000001010100010001");

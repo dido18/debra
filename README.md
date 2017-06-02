@@ -32,9 +32,10 @@ Library for 433Mhz transmission with Arduino:
 Tutorials:
 - [ismanettone- virtualwire](http://ismanettoneblog.altervista.org/blog/lezione-12-comunicazioni-wireless-low-cost-arduino/?doing_wp_cron=1493236840.0937430858612060546875)
 
-
+References
+ - [Tone 8-bit volume control](https://create.arduino.cc/projecthub/connornishijima/tone-with-8-bit-volume-control-no-extra-components-370c66)
 ## Hardware
- - 
+ -
 
 ## Trasmit message
 
@@ -48,6 +49,14 @@ struct Message {
   long value      : 20 ;   // The value we observed
 } message;
 ```
+## Raspberry
+Connect to traspberry at home:
+`ssh pi@192.168.1.3 `
+`raspberry`
+
+
+- [433Mhz and Raspberrypi](http://www.princetronics.com/how-to-read-433-mhz-codes-w-raspberry-pi-433-mhz-receiver/)
+
 
 ## Arduino Libro
 - *livello TTL** codifica di 0 con 0 volt, 1 con  5 Volt (3,3 volt)
