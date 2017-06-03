@@ -1,0 +1,4 @@
+node_modules/
+DB/
+www/uploads/
+npm-debug.log

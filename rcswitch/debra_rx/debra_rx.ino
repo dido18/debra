@@ -22,7 +22,7 @@ void loop() {
     
     int value = mySwitch.getReceivedValue();
 
-// telecomando universale
+// telecomando universale code send A
 //    Decimal: 5592512 (24Bit) Binary: 010101010101010111000000 Tri-State: FFFFFFFF1000 PulseLength: 361 microseconds Protocol: 1
 //Raw data: 11204,316,1124,1044,408,240,1124,1048,408,312,1124,1044,412,312,1124,1044,412,312,1128,1040,412,312,1128,1040,412,312,1124,1044,412,312,1116,1048,408,1048,404,1052,404,316,1120,320,1120,312,1124,316,1124,316,1120,316,1124,
 

@@ -1,0 +1,96 @@
+<!-- CARDS -->
+
+<div class="row">
+    <div class="col-md-3 text-center">
+        <span id="logo" class="hvr-buzz">
+            <img src="./assets/img/logo.png" height="100" width="100" alt="MQTT Dashboard"/>
+        </span>
+    </div>
+    <div class="col-md-3 text-center hidden-xs">
+        <h3>Order by</h3>
+        <button class="btn btn-flat btn-primary sort active" data-sort="default">Data</button>
+        <button class="btn btn-flat btn-primary sort" data-sort="random">Random</button>
+    </div>
+    <div class="col-md-3 text-center hidden-md hidden-lg">
+    {{#accelerometer}}
+        <p class="lead">Shake your Device to reorganize cards.</p>
+    {{/accelerometer}}
+    </div>
+    <div class="col-md-6 text-center">
+        <h3>Filter by</h3>
+        <button class="btn btn-flat btn-primary active filter" data-filter="all">Show All</button>
+        {{#rooms}}
+        <button class="btn btn-flat btn-primary filter" data-filter=".type_{{.}}">{{.}}</button>
+        {{/rooms}}
+    </div>
+</div>
+
+<!-- Devices cards  -->
+
+<div id="cards_container">
+
+
+        {{#CARDS}}
+        <div class="card pin mix type_{{room}}" style="background-color: {{background_color}};">
+
+            <div class="card-content">
+
+                {{#img}}
+                <div class="card-image" style="background-image: url({{img}})">
+                    <!-- <img src="{{img}}" alt="{{headline}}"> -->
+                    <h3 class="card-image-headline">{{headline}}</h3>
+                </div>
+                {{/img}}
+
+                <div class="btn-group pull-right">
+                      <a href="bootstrap-elements.html" data-target="#" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown"><i class="material-icons">more_vert</i></a>
+                      <ul class="dropdown-menu">
+                        <li class="disabled"><a href="#"><i class="fa fa-terminal fa-fw"></i> Type: {{type}}</a></li>
+                        <li class="disabled"><a href="#"><i class="fa fa-home fa-fw"></i> Room: {{room}}</a></li>
+                        <li><a href="#" onClick="events.emit('muteCard', '{{_id}}');" id="mute-{{_id}}">{{#device.notification_sound}}<i class="fa fa-volume-off fa-fw"></i> Mute{{/device.notification_sound}}{{^device.notification_sound}}<i class="fa fa-volume-up fa-fw"></i> Un-mute{{/device.notification_sound}}</a></li>
+                        {{#device}}
+                        {{#trigger_code}}
+                        <li><a href="#" onClick="events.emit('arm_disarm', '{{_id}}');" id="arm-{{_id}}">{{#armed}}<i class="fa fa-times-circle fa-fw"></i> Disarm{{/armed}}{{^armed}}<i class="fa fa-rocket fa-fw"></i> Arm{{/armed}}</a></li>
+                        {{/trigger_code}}
+                        {{/device}}
+                        <li class="divider"></li>
+                        <li><a href="#" onClick="events.emit('deleteCard', '{{_id}}');"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+                      </ul>
+                </div>
+
+                <div class="card-body">
+                    {{{card_body}}}
+                </div>
+
+                <footer class="card-footer">
+                {{#device}}
+                    {{#on_code}} {{! Switch section}}
+                    <div class="onoffswitch center-block" switch-id="{{_id}}">
+                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch-{{_id}}" {{#is_on}}checked{{/is_on}}>
+                        <label class="onoffswitch-label" for="switch-{{_id}}">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                    {{/on_code}}
+                    {{#trigger_code}} {{! Alarm section}}
+                    
+                        <div class="siren center-block text-center" alarm-id="{{_id}}"></div>
+                        <div class="text-center">
+                            <b>Last alert</b>: <span class='last_alert'>{{#last_alert}}{{last_alert}}{{/last_alert}}{{^last_alert}}never fired{{/last_alert}}</span>
+                        </div>
+                    
+                    {{/trigger_code}}
+                {{/device}}
+                </footer>
+
+            </div>
+
+        </div>
+        {{/CARDS}}
+
+ 
+
+</div>
+
+<!-- / CARDS -->
