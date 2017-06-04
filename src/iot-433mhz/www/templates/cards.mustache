@@ -31,7 +31,7 @@
 
 
         {{#CARDS}}
-        <div class="card pin mix type_{{room}}" style="background-color: {{background_color}};">
+        <div id="card_{{shortname}}" class="card pin mix type_{{room}}" style="background-color: {{background_color}};">
 
             <div class="card-content">
 
@@ -74,13 +74,25 @@
                     </div>
                     {{/on_code}}
                     {{#trigger_code}} {{! Alarm section}}
-                    
+
                         <div class="siren center-block text-center" alarm-id="{{_id}}"></div>
                         <div class="text-center">
                             <b>Last alert</b>: <span class='last_alert'>{{#last_alert}}{{last_alert}}{{/last_alert}}{{^last_alert}}never fired{{/last_alert}}</span>
                         </div>
-                    
+
                     {{/trigger_code}}
+                    {{#monitor_code}}  {{! Monitor section}}
+                     <p>Monitor code: <b>{{monitor_code}}</b></p>
+                       <span> Monitor Value:</span>
+                        <div monitor-id="{{_id}}">
+                            <!-- {{#values}} {{.}} {{/values}} -->
+                        </div>
+                        <!-- <canvas canvas-id={{_id}} ></canvas> -->
+
+
+                    {{/monitor_code}}
+                    <!-- <div>  {{#values}} <b>{{.}}</b> {{/values}} </div> -->
+
                 {{/device}}
                 </footer>
 
@@ -89,8 +101,28 @@
         </div>
         {{/CARDS}}
 
- 
+
 
 </div>
+<!-- <script>
+var ctx = document.getElementById("myChart").getContext('2d');
+let chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        datasets: [{
+            data: [10, 20, 30, 40, 50, 60]
+        }],
+    },
+    options: {
+        scales: {
+            xAxes: [{
+                ticks: {
+                    min: 'March'
+                }
+            }]
+        }
+    }
+});
+</script> -->
 
 <!-- / CARDS -->
