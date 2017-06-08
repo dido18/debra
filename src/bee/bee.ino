@@ -32,17 +32,7 @@ struct dataStruct {
 
 byte tx_buf[sizeof(message)] = {0};
 
-//int sensorPin = A0;    // Input analog pin of the sound sensor
-//
-//const int middleValue = 90 ;      //512
-//const int numberOfSamples = 128; // how many reads every cycle
-//int sample;                      // value of the michopone read every time
-//long segnale;
-//
-//long averageReading;
-//
-//long runningAverage = 0;
-//const int averageOver = 16;
+int sensorPin = A0;    // Input analog pin of the sound sensor
 
 void setup()
 {
@@ -56,8 +46,12 @@ void setup()
 int data = 0;
 void loop()
 {
-    send_msg_beequeen();
-    delay(10000);
+    //send_msg_beequeen();
+    //read_sound() 
+    uint8_t sample;
+    sample = analogRead(sensorPin);
+    Serial.println(sample);
+    delay(1000);
 }
 
 void send_msg_beequeen()
@@ -107,8 +101,19 @@ void send_msg_beequeen()
 //  delay(10000);
 
 
-
 //
+//const int middleValue = 90 ;      //512
+//const int numberOfSamples = 128; // how many reads every cycle
+//int sample;                      // value of the michopone read every time
+//long segnale;
+//
+//long averageReading;
+//
+//long runningAverage = 0;
+//const int averageOver = 16;
+
+
+
 //long  read_sound()
 //{
 //  long sumOfSquares = 0;
@@ -124,6 +129,6 @@ void send_msg_beequeen()
 //  averageReading = sumOfSquares / numberOfSamples;              // actual average
 //  runningAverage = (((averageOver - 1) * runningAverage) + averageReading) / averageOver; //
 //
-//  //Serial.println(runningAverage);
+//  Serial.println(runningAverage);
 //  return runningAverage;
 //}
