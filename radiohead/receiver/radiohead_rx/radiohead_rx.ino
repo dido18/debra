@@ -59,16 +59,16 @@ void loop()
       Serial.print("  counter: ");
       Serial.println(message.counter);
       
-      if (message.sound < maxSoundLevel)
-      {
-        Serial.println("values < 100");
-      }
-      else // if (message.sound >= 100)
-      {
-        Serial.println("values >= 100");
-        play_music();
-
-      }
+//      if (message.sound < maxSoundLevel)
+//      {
+//        Serial.println("values < 100");
+//      }
+//      else // if (message.sound >= 100)
+//      {
+//        Serial.println("values >= 100");
+//        play_music();
+//
+//      }
  
     }
 }

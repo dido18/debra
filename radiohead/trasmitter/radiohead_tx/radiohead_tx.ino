@@ -41,32 +41,32 @@ void setup()
 
 void loop()
 {
-      long  = read_sound();
-      Serial.println(g);
+     // long  = read_sound();
+      //Serial.println(g);
 
  
      digitalWrite(13, HIGH); // Flash a light to show transmitting
 //
-//    message.sound = analogRead(sensorPin);  // read analog sound value
-//    Serial.println("Sound level");
-//    Serial.println(message.press_norm);
+     message.sound = 6400; //analogRead(sensorPin);  // read analog sound value
+   Serial.println("Sound level");
+    Serial.println(message.sound);
 //
-//    memcpy(tx_buf, &message, sizeof(message) );
-//    //void * memcpy ( void * destination, const void * source, size_t num );
-//    // Copy block of memory
-//    // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-//    byte zize=sizeof(message);
+    memcpy(tx_buf, &message, sizeof(message) );
+    //void * memcpy ( void * destination, const void * source, size_t num );
+    // Copy block of memory
+    // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+    byte zize=sizeof(message);
 //
-//    driver.send((uint8_t *)tx_buf, zize);
-//    //Serial.print("Sending.....");
+    driver.send((uint8_t *)tx_buf, zize);
+    Serial.print("Sending.....");
 //
 //    // driver.send((uint8_t *)msg, strlen(msg));
-//    driver.waitPacketSent();
+     driver.waitPacketSent();
 //
-//    digitalWrite(13, LOW);
+    digitalWrite(13, LOW);
 //    message.counter++;
 //
-//    delay(1000);
+    delay(1000);
 //
 }
 
