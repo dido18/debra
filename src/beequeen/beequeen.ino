@@ -31,6 +31,12 @@ struct MESSAGE {
 
 struct MESSAGE *MessageIn;
 
+// paylod message
+struct {
+  int op;
+  uint8_t data;           // 2 bytes with no negative numbers = 65,535 (2^16) - 1)
+} MESSAGE_RESPONSE;
+
 
 void setup()
 {
@@ -52,12 +58,39 @@ void loop(){
     Serial.print(", Data ");
     Serial.print(MessageIn->data);
     Serial.println("} ");
+
+    //MESSAGE_RESPONSE.op = 0;
+    //MESSAGE_RESPONSE.data = 1;
+    send_msg();
     
   }
   
     // rh_send();
     // rh_receive();
     // recv_bee();
+}
+void send_msg()
+{
+  MESSAGE_RESPONSE.op =  3;
+  MESSAGE_RESPONSE.data = 150;
+
+  if (manager.sendto((uint8_t*)&MESSAGE_RESPONSE, sizeof(MESSAGE_RESPONSE), 1)) 
+  {
+
+    Serial.print("Message sent to BEEE address: "); 
+    Serial.print(1);
+    Serial.print(" OP: ");
+    Serial.print(MESSAGE_RESPONSE.op);
+    Serial.print(" Data: ");
+    Serial.print(MESSAGE_RESPONSE.data);
+    Serial.println("");
+  }
+  else
+  {
+    Serial.print("Message NOT sent to Bee queen");
+  }
+  manager.waitPacketSent( ) ;
+  //Serial.print("sent message!");
 }
 
 bool receive_from_bees(){
@@ -78,7 +111,7 @@ bool receive_from_bees(){
     return false;
 }
 
-int value =0;
+// value =0;
 
 //void recv_bee(){  
 //  

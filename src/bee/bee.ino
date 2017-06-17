@@ -28,6 +28,13 @@ struct {
 } MESSAGE;
 
 
+struct MESSAGE_RESPONSE{
+  int  op ;       // 0 =register, 
+  uint8_t  data ;   // 2 bytes with no negative numbers = 65,535 (2^16) - 1)
+};
+
+struct MESSAGE_RESPONSE *MessageIn;
+
 int sensorPin = A0;    // Input analog pin of the sound sensor
 
 const int ledPin = 13;      // integrated arduino Led pin
@@ -51,6 +58,15 @@ void loop()
 {
     // read_sound() ;
     send_msg_beequeen();
+
+    if(receive_msg()){
+    Serial.print(" { Operation: ");
+    Serial.print(MessageIn->op);
+    Serial.print(", Data ");
+    Serial.print(MessageIn->data);
+    Serial.println("} ");
+      
+    }
     
     delay(2000);
     
@@ -60,6 +76,24 @@ void loop()
     //Serial.println(sample);
     
    // delay(2000);
+}
+
+bool receive_msg(){
+  if (manager.available())
+  {
+    // Wait for a message addressed to us from the client
+    uint8_t len = sizeof(buf);
+    uint8_t from;
+    if (manager.recvfrom(buf, &len, &from))
+    {
+      Serial.print("Received message from ");
+      Serial.print(manager.headerFrom());
+      MessageIn = (struct MESSAGE_RESPONSE*)buf;
+    }
+     return true;
+  }
+  else
+    return false;
 }
 
 void send_msg_beequeen()
