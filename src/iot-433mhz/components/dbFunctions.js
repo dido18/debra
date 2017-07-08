@@ -31,14 +31,6 @@ function _initializeCard(params, img_path){ // params received through API
 		};
 	else if (params.type === 'info')
 		selected_device = {};
-	else if (params.type === 'monitor')
-		selected_device = {
-			values : [],
-			notification_sound: true,
-			armed: params.armed || true,
-			monitor_code: parseInt(params.monitor_code)
-		};
-
 
 	return {
 		active: true,
@@ -75,7 +67,6 @@ module.exports = function(db, config){
 
 	// exposed methods
 	var methods = {
-
 			putCodeInDB: function(data, callback){
 				return new Promise(function(resolve, reject){
 					// check if the given code is already in DB, if not, put it.
@@ -170,17 +161,6 @@ module.exports = function(db, config){
 				});
 			},
 			checkDatabaseCorrispondence: function(params){
-				// 			{ headline: 'unique',
-			  // shortname: 'unique',
-			  // card_body: 'ffff',
-			  // room: 'bedroom',
-			  // background_color: '#ffff8d',
-			  // type: 'monitor',
-			  // card_img: 'undefined'
-			  // monitor_code (aggiuton io)
-			  // }
-
-
 				// CHECK THAT:
 				// shortname is unique
 				// codes are in db.RFCODES
@@ -193,7 +173,6 @@ module.exports = function(db, config){
 							var query = {};
 							if (params.type === 'switch') query = { $or: [{ code: parseInt(params.on_code), isIgnored: false, assignedTo: 'none' }, { code: parseInt(params.off_code), isIgnored: false, assignedTo: 'none' }] };
 							else if (params.type === 'alarm') query = {code: parseInt(params.trigger_code), isIgnored: false, assignedTo: 'none'};
-							else if (params.type === 'monitor') query = {code: parseInt(params.monitor_code), isIgnored: false, assignedTo: 'none'};
 							else if (params.type === 'info') query = {};
 
 							db.RFCODES.find(query, function(err, docs){
@@ -216,7 +195,7 @@ module.exports = function(db, config){
 					db.CARDS.insert(_initializeCard(req.body, destination_path), function(err, newDoc){
 							if (err) return reject(err);
 							// set as assigned the codes in DB (handles both 'switch' and 'alarm' type)
-							db.RFCODES.update({ $or: [{ code: parseInt(req.body.on_code) }, { code: parseInt(req.body.off_code) }, {code: parseInt(req.body.trigger_code)}, {code: parseInt(req.body.monitor_code)}] }, { $set: { assignedTo: req.body.shortname } }, { multi: true }, function (err, numReplaced) {
+							db.RFCODES.update({ $or: [{ code: parseInt(req.body.on_code) }, { code: parseInt(req.body.off_code) }, {code: parseInt(req.body.trigger_code)}] }, { $set: { assignedTo: req.body.shortname } }, { multi: true }, function (err, numReplaced) {
 							  // numReplaced = 2
 							  resolve(newDoc); // return the new Card just inserted
 							});
@@ -339,41 +318,11 @@ module.exports = function(db, config){
 			},
 			setSwitchStatus: function(card_id, is_on){
 				return new Promise(function(resolve, reject){
-					db.CARDS.update({ _id: card_id }, { $set: { "device.is_on": is_on } }, {},function (err, numReplaced) {
+					db.CARDS.update({ _id: card_id }, { $set: { "device.is_on": is_on } }, {}, function (err, numReplaced) {
 					  if (err) return reject(err);
 					  resolve(numReplaced);
 					});
 				});
-			},
-
-			addMonitorValue : function(cardShortname, value){
-					return new Promise (function(resolve, reject){
-						// if (!identifiers.hasOwnProperty('_id') && !identifiers.hasOwnProperty('shortname')) return reject('No valid parameters.');
-						// identifiers.type = 'monitor';
-						var maxValues = 15;
-
-						db.CARDS.find({shortname: cardShortname}, function(err, docs){
-							if (err) return reject(err);
-							if(docs.length){
-								 var values =  docs[0].device.values;
-								 //console.log(values);
-									if(values.length <  maxValues){
-										 values.push(value);
-									}
-									else{
-										values.shift();
-										values.push(value);
-									}
-									// found card a monitor card, update the value received
-								db.CARDS.update({shortname: cardShortname} , { $set: { "device.values": values} },{},function (err, numReplaced) {
-								  if (err) return reject(err);
-								  resolve(docs[0]);
-								});
-
-							}else resolve(undefined);
-						});
-
-					});
 			},
 			alarmTriggered: function(cardShortname, type){
 				return new Promise(function(resolve, reject){

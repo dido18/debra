@@ -2,7 +2,6 @@
  * Event Handling
 */
 
-
 events.on('refresh', function(){
   // refresh the page
   window.location.reload();
@@ -17,7 +16,7 @@ events.on('ignoreCode', function(code){
 	// send ignore's command to the Server
 	socket.emit('ignoreCode', code); // NB. socket defined below eventing.js
 	RFcodes.deleteCode(code); // remove code from the incoming_codes.
-  //ga('send', 'event', 'Core', 'ignore', 'Ignore code');
+  ga('send', 'event', 'Core', 'ignore', 'Ignore code');
 });
 
 events.on('removeIgnoreCode', function(code){
@@ -29,12 +28,11 @@ events.on('assignCode', function(code){
   var view = {title: 'Assign code', code: code};
   templating.renderTemplate('assignCode.mustache', $('#main_modal_box'), view).then(function(){
   	$('#assign-dialog').modal('show');
-    //ga('send', 'event', 'UI', 'assign', 'code assignment');
+    ga('send', 'event', 'UI', 'assign', 'code assignment');
   }).catch(function(err){ // err
   	notie.alert(2, err, 0);
   });
 });
-
 
 
 events.on('newCardClick', function(code){
@@ -71,9 +69,6 @@ events.on('newCardClick', function(code){
 		      	str += '<div class="col-md-5"><select id="code" name="trigger_code" class="form-control codes" required>'+RFcodes.getCodesInHTML()+'</select><span class="help-block">Trigger Code</span></div>';
 		      }else if (selected === 'info'){ // we don't need to have codes
 		      	str = '';
-          }else if (selected === 'monitor'){
-            str += '<div class="col-md-5"><select id="code" name="monitor_code" class="form-control codes" required>'+RFcodes.getCodesInHTML()+'</select><span class="help-block">Monitor Code</span></div>'+
-              ' <div class="col-md-5"><label for="monitor-level"  class="col-md-2 control-label">Monitor Level</label>  <input type="text" class="form-control" id="monitor-level" name="monitor-level" placeholder="Monitor level" ></div>';
 		      }
 		    });
 		    $('#type_related_content').html(str);
@@ -95,7 +90,6 @@ events.on('newCardClick', function(code){
 		});
 		// form submitting listener
 		var $cardForm = $('#newCardForm');
-
 		$cardForm.submit(function(e){
 			e.preventDefault();
 			// Ajax POST to /api/cards/new
@@ -106,21 +100,16 @@ events.on('newCardClick', function(code){
 			form.append('card_body', $('#description').val());
 			form.append('room', $('input[name=room]').val());
 			form.append('background_color', background_color);
-
 			var $type_selected = $('#type option:selected').val();
 			form.append('type', $type_selected);
 
 			if ($type_selected == 'switch'){
 				form.append('on_code', $('#code option:selected').val());
 				form.append('off_code', $('#off_code option:selected').val());
-			}else if ($type_selected == 'alarm'){
+			}else if ($type_selected == 'alarm')
 				form.append('trigger_code', $('#code option:selected').val());
-      }
-      else if ($type_selected == 'monitor'){
-				form.append('monitor_code', $('#code option:selected').val());
-      }
-			form.append('card_img', $('input[name=card_img]').prop('files')[0]);
 
+			form.append('card_img', $('input[name=card_img]').prop('files')[0]);
 
 			var settings = {
 			  'async': true,
@@ -141,7 +130,7 @@ events.on('newCardClick', function(code){
 			    notie.alert(1, '<i class="fa fa-paper-plane"></i> Card sent!', 3);
 			    RFcodes.deleteCodes([$('#code option:selected').val(), $('#off_code option:selected').val()]); // remove codes from the incoming codes. (in this way it can't be used anymore)
 			    $('#new-card-dialog').modal('hide');
-          //ga('send', 'event', 'Core', 'card', 'new card');
+          ga('send', 'event', 'Core', 'card', 'new card');
 			}).fail(function(error){
 				notie.alert(2, JSON.parse(error.responseText).err, 0);
 				console.log('Ajax error', error);
@@ -228,66 +217,6 @@ events.on('renderInitCards', function(initData){
 
 });
 
-// value received from monitor
-events.on("newMonitorValue", function(card){
-
-  var cardId = card._id;
-  var _values = card.device.values;
-  console.log(_values);
-  console.log($('#card_'+card.shortname));
-  //var $cardForm = $('div[monitor-id='+cardId+']')
-  // console.log( $cardForm);
-  ///var _values = card.device.values ;
-  // var $cardmonitor = $('div[monito-id='+cardId+']')
-  // $cardmonitor.html('<p>updatte value </p>'+_values[0]);
-  //var $card = $('#card_'+card.shortname)
-  var $cardmonitor = $('div[monitor-id='+cardId+']')
-
-  //for(i=0; i< _values.length; i++) {
-  $cardmonitor.empty();
-  $cardmonitor.append(_values[_values.length-1]);
-  //}
-
-  // var ctx;
-  // if( $('canvas[canvas-id='+card._id+']').length ) ctx = $('canvas[canvas-id='+card._id+']').get(0).getContext('2d');
-  // else console.log('Error: Canvas not found with selector #canvas');
-  //
-  // //var ctx = document.getElementById("myChart").getContext('2d');
-  //
-  // let chart = new Chart(ctx, {
-  //     type: 'line',
-  //     data: {
-  //         datasets: [{
-  //             data: _values
-  //         }],
-  //     },
-  //     options: {
-  //         scales: {
-  //             xAxes: [{
-  //                 ticks: {
-  //                     min: 'March'
-  //                 }
-  //             }]
-  //         }
-  //     }
-  // });
-
-  function addData(chart, label, data) {
-    chart.data.labels.push(label);
-    chart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data);
-    });
-    chart.update();
-}
-  // var view = {CARDS : _values};
-	// templating.renderTemplate('cards.mustache', $('#card_'+card.shortname) , view ).then(function(){  //$('div[monitor-id='+cardId+']')
-  //     console.log("updated monit card");
-  // }).catch(function(err){ // err
-  // 		notie.alert(2, err, 0);
-  // });
-
-
-});
 // alarm triggered
 events.on('uiTriggerAlarm', function(card){
 	var $siren = $('div[alarm-id='+card._id+']');
@@ -314,7 +243,7 @@ events.on('uiTriggerAlarm', function(card){
 // delete card request
 events.on('deleteCard', function(_id){
 	socket.emit('deleteCard', _id);
-  //ga('send', 'event', 'Core', 'delete', 'Card removal', _id);
+  ga('send', 'event', 'Core', 'delete', 'Card removal', _id);
 });
 
 // mute card request
@@ -325,7 +254,7 @@ events.on('muteCard', function(_id){
 // arm/disarm request
 events.on('arm_disarm', function(_id){
 	socket.emit('arm_disarm', _id);
-  //ga('send', 'event', 'Core', 'arm', 'Arm/Disarm request', _id);
+  ga('send', 'event', 'Core', 'arm', 'Arm/Disarm request', _id);
 });
 
 // update card dropdown menu mute status
@@ -357,7 +286,7 @@ events.on('generateNewUID', function(){
 	$.get('/api/system/new/uid', function(data){
 		if (data.status === 'ok'){
 			$('#settings-outcome kbd').html('/register '+data.uid);
-      //ga('send', 'event', 'Core', 'uid-gen', data.uid);
+      ga('send', 'event', 'Core', 'uid-gen', data.uid);
 		}else notie.alert(2, data.error, 0);
 	});
 });
@@ -367,7 +296,7 @@ events.on('startTelegram', function(){
 	$.get('/api/system/telegram/enable', function(data){
 		if (data.status === 'ok'){
 			$('#notification-btns .btn-telegram').replaceWith('<a href="#" class="btn btn-telegram" onClick="events.emit(\'stopTelegram\');"><i class="fa fa-stop"></i> Stop <i class="fa fa-paper-plane-o"></i> Telegram Notification</a>');
-      //ga('send', 'event', 'Core', 'telegram', 'enabled');
+      ga('send', 'event', 'Core', 'telegram', 'enabled');
 		}else notie.alert(2, data.error, 0);
 	});
 });
@@ -377,7 +306,7 @@ events.on('stopTelegram', function(){
 	$.get('/api/system/telegram/disable', function(data){
 		if (data.status === 'ok'){
 			$('#notification-btns .btn-telegram').replaceWith('<a href="#" class="btn btn-telegram" onClick="events.emit(\'startTelegram\');"><i class="fa fa-play"></i> Start <i class="fa fa-paper-plane-o"></i> Telegram Notification</a>');
-      //ga('send', 'event', 'Core', 'telegram', 'disabled');
+      ga('send', 'event', 'Core', 'telegram', 'disabled');
 		}else notie.alert(2, data.error, 0);
 	});
 });
@@ -387,7 +316,7 @@ events.on('startEmail', function(){
 	$.get('/api/system/email/enable', function(data){
 		if (data.status === 'ok'){
 			$('#notification-btns .btn-email').replaceWith('<a href="#" class="btn btn-email" onClick="events.emit(\'stopEmail\');"><i class="fa fa-stop"></i> Stop <i class="fa fa-envelope-o"></i> Email Notification</a>');
-      //ga('send', 'event', 'Core', 'email', 'enabled');
+      ga('send', 'event', 'Core', 'email', 'enabled');
 		}else notie.alert(2, data.error, 0);
 	});
 });
@@ -397,7 +326,7 @@ events.on('stopEmail', function(){
 	$.get('/api/system/email/disable', function(data){
 		if (data.status === 'ok'){
 			$('#notification-btns .btn-email').replaceWith('<a href="#" class="btn btn-email" onClick="events.emit(\'startEmail\');"><i class="fa fa-play"></i> Start <i class="fa fa-envelope-o"></i> Email Notification</a>');
-      //ga('send', 'event', 'Core', 'email', 'enabled');
+      ga('send', 'event', 'Core', 'email', 'enabled');
 		}else notie.alert(2, data.error, 0);
 	});
 });
@@ -412,7 +341,7 @@ events.on('clickHome', function(){
 	console.log('Home button clicked.');
 	socket.emit('getInitCards', socket.id);
 	$('#c-circle-nav__toggle').click(); // Close Menu
-  //ga('send', 'event', 'UI', 'menu', 'Home button click');
+  ga('send', 'event', 'UI', 'menu', 'Home button click');
 });
 
 // Ignored codes Menu Button
@@ -424,7 +353,7 @@ events.on('clickIgnoredCodes', function(){
 		var view = {title: 'Ignored RF codes', RFcodes: data};
 		templating.renderTemplate('ignoredCodes.mustache', $('#main_modal_box'), view).then(function(){
 			$('#ignored-codes-dialog').modal('show');
-      //ga('send', 'event', 'UI', 'menu', 'Ignored codes button click');
+      ga('send', 'event', 'UI', 'menu', 'Ignored codes button click');
 		}).catch(function(err){ // err
 			notie.alert(2, err, 0);
 		});
@@ -438,7 +367,7 @@ events.on('clickAbout', function(){
 	console.log('About button clicked.');
 	templating.renderTemplate('about.mustache', $('#main_modal_box'), {}).then(function(){
 		$('#about-dialog').modal('show');
-    //ga('send', 'event', 'UI', 'menu', 'About click');
+    ga('send', 'event', 'UI', 'menu', 'About click');
 	}).catch(function(err){ // err
 		notie.alert(2, err, 0);
 	});
@@ -450,7 +379,7 @@ events.on('clickAddCard', function(){
 	events.emit('newCardClick');
 	console.log('New Card button clicked.');
 	$('#c-circle-nav__toggle').click(); // Close Menu
-  //ga('send', 'event', 'UI', 'menu', 'New card click');
+  ga('send', 'event', 'UI', 'menu', 'New card click');
 });
 
 // Settings Menu Button
@@ -467,7 +396,7 @@ events.on('clickSettings', function(){
 				settings.uid = uid;
 				templating.renderTemplate('settings.mustache', $('#main_modal_box'), settings).then(function(){
 					$('#settings-dialog').modal('show');
-          //ga('send', 'event', 'UI', 'menu', 'Settings click');
+          ga('send', 'event', 'UI', 'menu', 'Settings click');
 				}).catch(function(err){ // err
 					notie.alert(2, err, 0);
 				});
@@ -486,7 +415,7 @@ events.on('changeBg', function(){
   var picked = BACKGROUNDS.imgs[p % BACKGROUNDS.imgs.length];
   document.body.style.backgroundImage = "url('../assets/img/backgrounds/"+picked+"')";
   if (localStorage) localStorage.bg = picked;
-  //ga('send', 'event', 'UI', 'background', 'background change');
+  ga('send', 'event', 'UI', 'background', 'background change');
 });
 
 /* UTILITY FUNCTIONS */

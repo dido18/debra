@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+        <div id="future"></div>
+        <form id="form" id="chat_form">
+             Node:
+            <input id="node" type="text">
+            Operation:
+            <input id="op" type="text">
+            Data:
+            <input id="data" type="text">
+            <input type="submit" value="Send">
+        </form>
+         <script src="/jquery/dist/jquery.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+       var socket = io.connect('http://127.0.0.1:8080');
+
+       socket.on('connect', function(data) {
+          socket.emit('join', 'Hello World from client');
+       });
+
+       socket.on('messages', function(data) {
+                alert(data);
+        });
+
+        $('form').submit(function(e){
+             e.preventDefault();
+             var node = $('#node').val();
+             var op = $('#op').val();
+             var data = $('#data').val();
+             
+             socket.emit('command', JSON.stringify({"dst": node, "op":op, "data":data}));
+        });
+
+      </script>
+    </body>
+
+</html>

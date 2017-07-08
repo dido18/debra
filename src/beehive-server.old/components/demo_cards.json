@@ -1,0 +1,31 @@
+[
+  {
+    "active": true,
+    "date": 1452989005,
+    "headline": "Ignore Noisy codes",
+    "shortname": "welcome-info-card-2",
+    "card_body": "If you get flooded by a code, you can hit the 'Ignore' button once it pop out...<br/><b>Tip</b>: Usually a single RF button can generates multiple radio codes according to several reasons (pressure or waves noise), make sure to select the most common one for your switch/alarm card.",
+    "background_color": "#80d8ff",
+    "img": "/assets/demo_img/raspberry-pi-2.png",
+    "room": "living-room",
+    "type": "info",
+    "device": {}
+  },
+  {
+    "active": true,
+    "date": 1452989005,
+    "headline": "Switch Card",
+    "shortname": "welcome-switch-card",
+    "card_body": "This is a <b>switch card</b> example! You can easily use a 433mhz-based remote controller and catch the button codes directly in this dashboard! Once you got some codes, you're ready to associate them to the ON and OFF buttons, it's easy as programming your TV!",
+    "background_color": "#fafafa",
+    "img": "/assets/demo_img/livingroom1.jpg",
+    "room": "living-room",
+    "type": "switch",
+    "device": {
+      "on_code": 1111,
+      "off_code": 2222,
+      "notification_sound": true,
+      "is_on": false
+    }
+  }
+]

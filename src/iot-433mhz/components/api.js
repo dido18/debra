@@ -385,7 +385,7 @@ function commuteSwitch(req, res, dbFunctions, rf433mhz, io, on){
 
 function checkRequiredParams(params){ // required params (headline, shortname, room, type, on_code/off_code)
 
-	debug('API:/api/cards/new - Received parameters (monito_code?): ', params);
+	debug('API:/api/cards/new - Received parameters: ', params);
 
 	if (typeof params === 'undefined') return false;
 
@@ -418,7 +418,6 @@ function checkRequiredParams(params){ // required params (headline, shortname, r
 		break;
 		case 'monitor':
 			// TODO in feature release. Used by temperature sensor etc.
-			if (validator.isInt(params.monitor_code)) return true;
 			return true;
 		break;
 	}

@@ -1,0 +1,29 @@
+{
+	"app_title": "Beehive 433Mhz Home control",
+  "debug_namespace": "beehive-server",
+	"debug": true,
+	"username": "root",
+	"password": "root",
+	"arduino_baudrate": 9600,
+	"server_port": 8080,
+	"db_compact_interval": 12,
+	"backend_urls": "https://raw.githubusercontent.com/roccomuso/iot-433mhz/master/other/backend_urls.json",
+        "notificationDelay": 5,
+	"platforms":{
+		"rpi": {
+			"sniff-pin": 2,
+			"transmitter-pin": 0,
+			"debounce-delay": 500,
+			"use-external-arduino": true
+		},
+		"windows": {
+
+		},
+		"linux": {
+
+		},
+		"mac":{
+
+		}
+	}
+}

@@ -14,7 +14,8 @@ const uint16_t speed = 2000; //The desired bit rate in bits per second
 const uint8_t rxPin = 11;
 const uint8_t txPin = 12;
 
-#define BEE_ADDRESS 1
+#define BEE_ADDRESS 2
+
 #define BEE_QUEEN_ADDRESS 0
 
 
@@ -37,7 +38,7 @@ struct MESSAGE_RESPONSE *MessageIn;
 
 int sensorPin = A0;    // Input analog pin of the sound sensor
 
-const int ledPin = 13;      // integrated arduino Led pin
+const int ledPin = 3;      // integrated arduino Led pin = 13
 const int threshold = 110;  // value of sound ath which the led is switch on
 
 
@@ -86,9 +87,27 @@ bool receive_msg(){
     uint8_t from;
     if (manager.recvfrom(buf, &len, &from))
     {
+      
       Serial.print("Received message from ");
       Serial.print(manager.headerFrom());
       MessageIn = (struct MESSAGE_RESPONSE*)buf;
+      Serial.print(MessageIn->data);
+      switch (MessageIn->op) {
+        case 1:
+          //do something when var equals 1
+          break;
+        case 2:  //COMMAND message
+          if(MessageIn->data == 1)
+            digitalWrite(ledPin, HIGH);
+          else
+            digitalWrite(ledPin, LOW);
+          break;
+        default: 
+          // if nothing else matches, do the default
+          // default is optional
+        break;
+      }
+      
     }
      return true;
   }
@@ -103,8 +122,9 @@ void send_msg_beequeen()
 
   if (manager.sendto((uint8_t*)&MESSAGE, sizeof(MESSAGE), BEE_QUEEN_ADDRESS))
   {
-
-    Serial.print("Message sent to BEEE QUEEN address: "); 
+    Serial.print("Bee");
+    Serial.print(BEE_ADDRESS);
+    Serial.print("- Message sent to BEEE QUEEN address: "); 
     Serial.print(BEE_QUEEN_ADDRESS);
     Serial.print(" OP: ");
     Serial.print(MESSAGE.op);
@@ -121,44 +141,45 @@ void send_msg_beequeen()
 }
 
 
+//
+//
+//const int middleValue = 90;      //512 in the middle of the analog value
+//const int numberOfSamples = 128; // how many reads every cycle
+//int sample;                      // value of the michopone read every time
+//long signal;
+//
+//long averageReading;    // media del ciclo di lettura
+//
+//long runningAverage = 0;  // la media incorso dei valori calcolati
+//const int averageOver = 16;  //quanto velocemente i nuovi valori influenzano la media corrente, più grandi sono i numeri menore è la velcoitò
+//
+//
+//
+//long  read_sound()
+//{
+//  long sumOfSquares = 0;
+//  for (int i = 0; i < numberOfSamples ; i++)
+//  {
 
-
-const int middleValue = 90;      //512 in the middle of the analog value
-const int numberOfSamples = 128; // how many reads every cycle
-int sample;                      // value of the michopone read every time
-long signal;
-
-long averageReading;    // media del ciclo di lettura
-
-long runningAverage = 0;  // la media incorso dei valori calcolati
-const int averageOver = 16;  //quanto velocemente i nuovi valori influenzano la media corrente, più grandi sono i numeri menore è la velcoitò
-
-
-
-long  read_sound()
-{
-  long sumOfSquares = 0;
-  for (int i = 0; i < numberOfSamples ; i++)
-  {
-    sample = analogRead(0); //sensorPin
-    //Serial.println(sample);
-    signal = (sample - middleValue);  // calculate the shift from the middle value
-    signal *= signal;  // power the signal for having positive values
-    sumOfSquares += signal;
-  }
-
-  averageReading = sumOfSquares/numberOfSamples;              // actual average
-  runningAverage = (((averageOver-1)*runningAverage)+averageReading)/averageOver; //
-
-  Serial.println(runningAverage);
-  if (runningAverage >  threshold)
-  {
-    digitalWrite(ledPin, HIGH);
-    Serial.println("accendi ked");
-  }
-  else
-  {
-    digitalWrite(ledPin,LOW);
-  }
-  return runningAverage;
-}
+//    sample = analogRead(0); //sensorPin
+//    //Serial.println(sample);
+//    signal = (sample - middleValue);  // calculate the shift from the middle value
+//    signal *= signal;  // power the signal for having positive values
+//    sumOfSquares += signal;
+//  }
+//
+//  averageReading = sumOfSquares/numberOfSamples;              // actual average
+//  runningAverage = (((averageOver-1)*runningAverage)+averageReading)/averageOver; //
+//
+//  Serial.println(runningAverage);
+//  if (runningAverage >  threshold)
+//  {
+//    digitalWrite(ledPin, HIGH);
+//    Serial.println("accendi ked");
+//  }
+//  else
+//  {
+//    digitalWrite(ledPin,LOW);
+//  }
+//  return runningAverage;
+//}

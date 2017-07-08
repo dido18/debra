@@ -24,10 +24,6 @@ var dbFunctions, notification, webHooks;
 // Radio Frequency Class platform-independent
 var rf433mhz;
 
-
-var Chart = require('chart.js');
-
-
 // Starting Flow
 async.series({
         init_db: function(callback){
@@ -135,9 +131,6 @@ async.series({
                     else if (card.type === 'alarm') codes_to_remove = {
                         code: card.device.trigger_code
                     };
-                    else if(card.type === 'monitor') codes_to_remove = {
-                        code : card.device.monitor_code
-                    };
                     else codes_to_remove = undefined;
 
                     if (codes_to_remove) {
@@ -164,51 +157,42 @@ async.series({
                     debug('RFcode received: ', codeData);
 
                     if (codeData.status === 'received') {
+                        // put in DB if doesn't exists yet
                         dbFunctions.putCodeInDB(codeData).then(function(mex) {
-                                  debug(mex);
-                                  dbFunctions.isCodeAvailable(codeData.code).then(function(result) { // a code is available if not ignored and not assigned.
-                                      debug('code available: '+result.isAvailable+' assigned to: '+result.assignedTo);
+                            debug(mex);
 
-                                      if (result.isAvailable)
-                                          io.emit('newRFCode', codeData); // sent to every open socket.
-                                      else{
-                                          // code not available, check if the code is assigned to an alarm card
+                            dbFunctions.isCodeAvailable(codeData.code).then(function(result) { // a code is available if not ignored and not assigned.
+                                debug('code available: '+result.isAvailable+' assigned to: '+result.assignedTo);
 
-                                          if (codeData.type === "monitor"){
-                                            var card_shortname = result.assignedTo;
-                                             dbFunctions.addMonitorValue(card_shortname, codeData.value).then(function(card){
-                                                 debug('Value: '+codeData.value+' added to card: '+result.assignedTo);
-                                                 io.emit('newMonitorValue', card);
-                                             }, function(err){
-                                               console.error(err);
-                                             });
+                                if (result.isAvailable)
+                                    io.emit('newRFCode', codeData); // sent to every open socket.
+                                else{
+                                    // code not available, check if the code is assigned to an alarm card
 
-                                          }else if (codeData.type === "switch"){
-                                            var card_shortname = result.assignedTo;
+                                    var card_shortname = result.assignedTo;
+                                    dbFunctions.alarmTriggered(card_shortname, 'alarm').then(function(card){
+                                            if (card){
+                                               io.emit('uiTriggerAlarm', card);
+                                               // if Alarm is armed send email or other kind of notification (Telegram mex).
+                                               if (card.device.armed){
+                                                    notification.alarmAdviseAll(card);
+                                                }
 
-                                            dbFunctions.alarmTriggered(card_shortname, 'alarm').then(function(card){
-                                                    if (card){
-                                                       io.emit('uiTriggerAlarm', card);
-                                                       // if Alarm is armed send email or other kind of notification (Telegram mex).
-                                                       if (card.device.armed){
-                                                            notification.alarmAdviseAll(card);
-                                                        }
+                                            }
+                                    }, function(err){ console.error(err);});
 
-                                                    }
-                                            }, function(err){ console.error(err);});
-                                       }
-                                      }
-                                      // another WebHook call type (code detected)
-                                      notification.webHookCodeDetected(codeData);
-                                  }).catch(function(err) {
-                                      console.error(err);
-                                  });
+                                }
+                                // another WebHook call type (code detected)
+                                notification.webHookCodeDetected(codeData);
+                            }).catch(function(err) {
+                                console.error(err);
+                            });
 
-                              }, function(err) {
-                                  console.error(err);
-                              });
+                        }, function(err) {
+                            console.error(err);
+                        });
 
-                          }
+                    }
 
                 });
 
