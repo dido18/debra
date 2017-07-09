@@ -2,7 +2,7 @@ var express = require('express'); // Get the module
 var app = express();
 var server = require('http').Server(app);
 var bodyParser = require('body-parser');
-var config = require('./config.json'); // config file
+var config = require('../config.json'); // config file
 var io = require('socket.io')(server);
 
 
@@ -21,6 +21,16 @@ module.exports = function(_cb){
 
   // set .html as the default extension
   app.set('view engine', 'html');
+
+  app.set('views', __dirname + '/../www/views');
+
+
+
+  //http.use(express.static(__dirname + '/node_modules'));
+
+  // http.get('/', function(req, res,next) {
+  //     res.sendFile('../www/index.html'); // __dirname +
+  // });
 
   // API and Web Server + Socket part
   _cb({http: app, io: io});

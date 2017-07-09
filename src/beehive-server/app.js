@@ -28,9 +28,9 @@ async.series({
                     serial = new SerialPort(choosen_port, {
                         parser: SerialPort.parsers.readline('\n'),
                         baudRate: 9600,
-                        autoOpen: true // autoOpen flag set to false, manually need to open the port
+                        autoOpen: false // autoOpen flag set to false, manually need to open the port
                     });
-
+                    callback(null, 1);
 
 
                   //  cb(serial);
@@ -38,46 +38,71 @@ async.series({
                   });
 
         });
-       callback(null, 1);
+       //callback(null, 1);
 
      },
+     init_rf: function(callback) {
+            // Listen on Arduino Serial Port or RF433Mhz chip if on RPi platform.
+            serial.open(function (error) {
+      		  if ( error ) {
+      		    console.log('failed to open: '+error);
+      		    throw error;
+      		  } else {
+              setTimeout(function() {
+                  callback(null, 1);
+                  console.log('Open serial succesfully');
+              }, 2000);
+            }
+      		    //callback(null, 1);
+      		  });
+            // serial.openSerialPort(function() {
+            //     setTimeout(function() {
+            //         callback(null, 1);
+            //     }, 2000); // Arduino AutoReset requires to wait a few seconds before sending data!
+            // });
 
+        },
     server: function(callback) {
-      require("./server")(function(server){
+      require(__dirname +"/js/server")(function(server){
         var http = server.http;
         var io = server.io;   // socket.io
 
-        require("./api")(http, io); // add the api to the server
+        require(__dirname + "/js/api")(http, io); // add the api to the server
 
-        io.on('connection', function(client){
-            console.log('Client connected...');
+        var socketFunctions = require('./js/sockets.js')(io, serial);//, rf433mhz, dbFunctions);
 
-            client.on('join', function(data) {
-                console.log(data);
-                client.emit('messages', 'Hello from server');
-            });
-
-            client.on("command", function(data){
-              console.log(data);
-              serial.open(function (error) {
-                if ( error ) {
-                  console.log('failed to open: '+error);
-                  throw error;
-                } else {
-                   console.log('Serial port opened');
-
-                }
-              });
-
-              if (serial.isOpen()){
-                //serial.write(String(msg), callback);
-                serial.write(data);//JSON.stringify({"dst":2, "op":2, "data":1}));
-              }else{
-                console.log('SerialPort not open!');
-            }
+      
+        /* LISTENERS */
+       io.on('connection', socketFunctions.onConnection);
+        // io.on('connection', function(client){
+        //     console.log('Client connected...');
+        //
+        //     client.on('join', function(data) {
+        //         console.log(data);
+        //         //client.emit('messages', 'Hello from server');
+        //     });
+        //
+        //     client.on("command", function(data){
+        //       console.log("command received");
+        //       serial.open(function (error) {
+        //         if ( error ) {
+        //           console.log('failed to open: '+error);
+        //           throw error;
+        //         } else {
+        //            console.log('Serial port opened');
+        //
+        //         }
+        //       });
+        //
+        //       if (serial.isOpen()){
+        //         //serial.write(String(msg), callback);
+        //         serial.write(data);//JSON.stringify({"dst":2, "op":2, "data":1}));
+        //       }else{
+        //         console.log('SerialPort not open!');
+        //     }
               //serial.write(data);
-            });
-          });
+            //});
+//});
 
       });
 
