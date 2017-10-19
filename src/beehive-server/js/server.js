@@ -22,6 +22,8 @@ module.exports = function(_cb){
   // set .html as the default extension
   app.set('view engine', 'html');
 
+  app.use(express.static('www'));
+
   app.set('views', __dirname + '/../www/views');
 
 

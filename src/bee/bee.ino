@@ -38,7 +38,7 @@ struct MESSAGE_RESPONSE *MessageIn;
 
 int sensorPin = A0;    // Input analog pin of the sound sensor
 
-const int ledPin = 3;      // integrated arduino Led pin = 13
+const int ledPin = LED_BUILTIN; // 3;      // integrated arduino Led pin = 13
 const int threshold = 110;  // value of sound ath which the led is switch on
 
 
@@ -57,19 +57,20 @@ uint8_t buf[RH_ASK_MAX_MESSAGE_LEN];
 
 void loop()
 {
+    //Serial.println(ledPin);
     // read_sound() ;
-    send_msg_beequeen();
-
+    // send_msg_beequeen();
+    
     if(receive_msg()){
-    Serial.print(" { Operation: ");
-    Serial.print(MessageIn->op);
-    Serial.print(", Data ");
-    Serial.print(MessageIn->data);
-    Serial.println("} ");
+      Serial.print(" { Operation: ");
+      Serial.print(MessageIn->op);
+      Serial.print(", Data ");
+      Serial.print(MessageIn->data);
+      Serial.println("} ");
       
     }
     
-    delay(2000);
+    delay(1000);
     
     // read_sound() ;
     //int sample;
@@ -91,16 +92,23 @@ bool receive_msg(){
       Serial.print("Received message from ");
       Serial.print(manager.headerFrom());
       MessageIn = (struct MESSAGE_RESPONSE*)buf;
+      Serial.print("{ data: ");
       Serial.print(MessageIn->data);
+      Serial.print(", op: ");
+      Serial.print(MessageIn->op);
       switch (MessageIn->op) {
         case 1:
           //do something when var equals 1
           break;
         case 2:  //COMMAND message
-          if(MessageIn->data == 1)
+          if(MessageIn->data == 1){
             digitalWrite(ledPin, HIGH);
-          else
+            Serial.print("Accendi led");
+          }
+          else{
+            Serial.print("Spegni led ");
             digitalWrite(ledPin, LOW);
+          }
           break;
         default: 
           // if nothing else matches, do the default
@@ -118,7 +126,8 @@ bool receive_msg(){
 void send_msg_beequeen()
 {
   MESSAGE.op = 1;
-  MESSAGE.data = 50;
+  uint8_t d = random(0, 100);
+  MESSAGE.data = d;
 
   if (manager.sendto((uint8_t*)&MESSAGE, sizeof(MESSAGE), BEE_QUEEN_ADDRESS))
   {

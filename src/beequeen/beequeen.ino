@@ -1,6 +1,6 @@
 
 /*
- * beehibe.ino  (trasmitter / receiver)
+ * beequuen.ino  (trasmitter / receiver)
  *
  * Receives/trasmit the signals to the bee(s) sensors.
  *
@@ -51,8 +51,9 @@ void setup()
 uint8_t buf[RH_ASK_MAX_MESSAGE_LEN];
 
 
+
 void loop(){
-  //Serial.println("Receiving beehive");
+  
   if (receive_msg()){
 
    StaticJsonBuffer<100> jsonBuffer;
@@ -66,49 +67,11 @@ void loop(){
    root["status"] = "received";
    root.printTo(Serial);
    Serial.println();
-    //send_msg(BEE_1_ADDRESS);
   }
   
   send_msg();
 }
 
-void send_msg()
-{
-     if (Serial.available() > 0){
-      
-        String val = Serial.readStringUntil('\n');
-        
-        StaticJsonBuffer<200> jsonBuffer;
-        JsonObject& root = jsonBuffer.parseObject(val);
-        
-         // Test if parsing succeeds.
-        if (!root.success()) {
-          Serial.println("parseObject() failed");
-          return;
-        }
-        uint8_t src = root["src"];
-        uint8_t dst = root["dst"];
-        
-        MESSAGE_RESPONSE.op =  root["op"];
-        MESSAGE_RESPONSE.data = root["data"];
-          
-        if (manager.sendto((uint8_t*)&MESSAGE_RESPONSE, sizeof(MESSAGE_RESPONSE), dst))
-          {
-          // send to beehive server the ack
-          root["status"] = "sent";
-          
-          root.printTo(Serial);
-          Serial.println();
-        }else
-         {
-          root["status"] = "error";
-          
-          root.printTo(Serial);
-          Serial.println();
-        }
-        manager.waitPacketSent();
-     }
-}
 
 bool receive_msg(){
   if (manager.available())
@@ -126,3 +89,46 @@ bool receive_msg(){
   else
     return false;
 }
+
+void send_msg()
+{
+     if (Serial.available() > 0){
+      
+        String val = Serial.readStringUntil('\n');
+        
+        StaticJsonBuffer<200> jsonBuffer;
+        JsonObject& root = jsonBuffer.parseObject(val);
+        
+         // Test if parsing succeeds.
+        if (!root.success()) {
+          Serial.println("parseObject() failed");
+          return;
+        }
+        
+        uint8_t src = root["src"];
+        uint8_t dst = root["dst"];
+        
+        MESSAGE_RESPONSE.op =  root["op"];
+        MESSAGE_RESPONSE.data = root["data"];
+
+        // Broadcast to all the nodes; RH_BROADCAST_ADDRESS = 255
+        // if (dst = 255)
+        //    dst = RH_BROADCAST_ADDRESS; // broadcast to all the nodes
+        
+        if (manager.sendto((uint8_t*)&MESSAGE_RESPONSE, sizeof(MESSAGE_RESPONSE), dst))
+          {
+            // send to beehive server the ack
+            root["status"] = "sent";
+            root.printTo(Serial);
+            Serial.println();
+          }else
+          {
+            root["status"] = "error";  
+            root.printTo(Serial);
+            Serial.println();
+          } 
+          manager.waitPacketSent();
+     }
+     
+}
+

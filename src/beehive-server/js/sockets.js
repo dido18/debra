@@ -99,13 +99,10 @@ module.exports = function(io, serial){ // rf433mhz){//, rf433mhz, dbFunctions){
     		    client_socket.on('disconnect', function() {
     		        clients.splice(clients.indexOf(client_socket), 1);
     		        console.log('Client disconnected:', client_socket.id);
-    		        // remaining clients
-    		        // clients.forEach(function(sckt){ console.log(sckt.id);} );
     		    });
 
             // Sending the cards stored in db.CARDS
            //  methods.asyncEmitInitCards(client_socket);
-
 
             // Listen for socket events
             client_socket.on('command', function(data){
@@ -131,6 +128,15 @@ module.exports = function(io, serial){ // rf433mhz){//, rf433mhz, dbFunctions){
 
 		},
 
+		// on: function(callback){ // Receiving String as JSON from serial USB port
+		// 			serial.on('data', function(data){
+		// 				try{
+		// 					callback(JSON.parse(data)); // returning JSON parsed
+		// 				}catch(e){
+		// 					console.log('Error parsing this JSON: ', data);
+		// 				}
+		// 			});
+		// 	}
 	};
 
 	return methods;
